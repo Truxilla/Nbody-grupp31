@@ -19,9 +19,9 @@ def particleForce(
             massJ = stateArray[tickNumber - 1, j].mass
             xDifference = stateArray[tickNumber - 1, i].position[0] - stateArray[tickNumber - 1, j].position[0]
             yDifference = stateArray[tickNumber - 1, i].position[1] - stateArray[tickNumber - 1, j].position[1]
-            distance = xDifference ** 2 + yDifference ** 2
+            distance = np.sqrt(xDifference ** 2 + yDifference ** 2)
             totalForce[0] += -gravity * massI * xDifference * (massJ / ((distance + epsilon) ** 3))
-            totalForce[1] += -gravity * massI * xDifference * (massJ / ((distance + epsilon) ** 3))
+            totalForce[1] += -gravity * massI * yDifference * (massJ / ((distance + epsilon) ** 3))
 
     return totalForce
 

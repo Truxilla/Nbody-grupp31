@@ -26,7 +26,7 @@ with open(f"{filename}", "rb") as f:
         )
         print(data[-1])
 
-timespan = (0, 10)
+timespan = (0, 20)
 timeVector, result = solver.solveNbody(
     func=solver.particleForce,
     timespan=timespan,
@@ -38,6 +38,17 @@ timeVector, result = solver.solveNbody(
 xs = [data[i].position[0] for i in range(N)]
 ys = [data[i].position[1] for i in range(N)]
 sizes = [72 * data[i].brightness for i in range(N)]
+
+
+with open(f"{'dst/'+ 'change_me' + '_output.gal'}", 'w') as o:
+    for i in range(N):
+        current = result[-1][i]
+        writeable = struct.pack('dddddd', current.position[0], current.position[1], current.mass, 
+                                current.velocity[0], current.velocity[1], current.brightness)
+        o.write(str(writeable))
+
+
+
 
 print(xs, ys)
 xs += [1, 1, 0, 0]
