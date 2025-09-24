@@ -56,7 +56,6 @@ def solveNbody(func, timespan, initialState, deltaTime, *args):
 
     outputVectorArray = np.zeros((len(timeVector), len(initialState)), dtype=object)
     outputVectorArray[0, :] = initialState
-    print(outputVectorArray)
 
     N = len(initialState)
     masses = np.zeros(N, dtype=float)

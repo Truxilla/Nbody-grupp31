@@ -27,10 +27,10 @@ with open(f"{filename}", "rb") as f:
                 brightness
             )
         )
-        print(data[-1])
+        #print(data[-1])
+
 
 timespan = (0, (STEPS - 1) * DELTATIME)
-
 timeVector, result = solver.solveNbody(
     func=solver.particleForce,
     timespan=timespan,
@@ -59,3 +59,5 @@ with open(f"{'dst/' + 'change_me' + '_output.gal'}", 'wb') as o:
 # fig, ax = plt.subplots()
 # ax.scatter(xs, ys, sizes)
 # plt.show()
+
+print(sys.float_info.epsilon)
