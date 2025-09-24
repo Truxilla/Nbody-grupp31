@@ -5,7 +5,7 @@ from planet import Planet
 epsilon = 0.001
 
 
-def particleForce(
+def particleAcceleration(
     i, N, masses, positions, tickNumber
 ):
     gravity = 100/N
@@ -26,11 +26,7 @@ def particleForce(
 
     totalForce = np.sum(forces, axis = 0)
 
-    return totalForce * -gravity * masses[i]
-
-
-def particleAcceleration(i, N, masses, positions, tickNumber):
-    return particleForce(i, N, masses, positions, tickNumber) / masses[i]
+    return totalForce * -gravity
 
 
 def updateParticle(i, N, masses, positions, velocities, tickNumber, deltaTime):
@@ -44,7 +40,7 @@ def doTick(N, masses, positions, velocities, tickNumber, deltaTime):
         updateParticle(i, N, masses, positions, velocities, tickNumber, deltaTime)
 
 
-def solveNbody(func, timespan, initialState, deltaTime, *args):
+def solveNbody(timespan, initialState, deltaTime, *args):
     timeVector = np.arange(timespan[0], timespan[1], deltaTime)
     deltaTimeVector = np.ones_like(timeVector) * deltaTime
 

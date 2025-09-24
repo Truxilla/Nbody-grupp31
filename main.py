@@ -32,7 +32,6 @@ with open(f"{filename}", "rb") as f:
 
 timespan = (0, STEPS * DELTATIME)
 timeVector, result = solver.solveNbody(
-    func=solver.particleForce,
     timespan=timespan,
     initialState=np.array(data),
     deltaTime=DELTATIME
