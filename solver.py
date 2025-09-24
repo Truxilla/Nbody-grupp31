@@ -13,7 +13,7 @@ def particleForce(
     gravity = 100/numberOfParticles
     massI = stateArray[tickNumber - 1][i].mass
 
-    totalForce = np.array([0, 0])
+    totalForce = np.array([0.0, 0.0])
     for j in range(numberOfParticles):
         if i != j:
             massJ = stateArray[tickNumber - 1, j].mass
