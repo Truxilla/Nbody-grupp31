@@ -50,13 +50,13 @@ def solveNbody(func, timespan, initialState, deltaTime, *args):
     if timeVector[-1] < timespan[1]:
         timeVector = np.append(timeVector, timespan[1])
         deltaTimeVector = np.append(
-            deltaTimeVector, timeVector[-1] - timespan[-2]
+            deltaTimeVector, timeVector[-1] - timeVector[-2]
         )
 
     outputVectorArray = np.zeros((len(timeVector), len(initialState)), dtype=object)
     outputVectorArray[0, :] = initialState
 
     for tickNumber in range(1, len(timeVector)):
-        doTick(outputVectorArray, tickNumber, deltaTime)
+        doTick(outputVectorArray, tickNumber, deltaTimeVector[tickNumber])
 
     return timeVector, outputVectorArray
