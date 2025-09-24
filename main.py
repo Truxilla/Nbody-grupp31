@@ -10,6 +10,7 @@ import solver
 
 filename = sys.argv[1]
 
+STEPS = 200
 DELTATIME = 0.00001
 N = int(re.search(r"\w+_N_(\d+).gal", filename).group(1))
 print(filename)
@@ -29,15 +30,14 @@ with open(f"{filename}", "rb") as f:
         )
         print(data[-1])
 
-timespan = (0, 200 * DELTATIME)
+timespan = (0, (STEPS - 1) * DELTATIME)
 
-#cProfile.run("""
 timeVector, result = solver.solveNbody(
     func=solver.particleForce,
     timespan=timespan,
     initialState=np.array(data),
     deltaTime=DELTATIME
-)#""")
+)
 
 
 xs = [data[i].position[0] for i in range(N)]

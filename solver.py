@@ -9,28 +9,25 @@ epsilon = 0.001
 def particleForce(
     i, N, masses, positions, velocities, tickNumber
 ):
-    # numberOfParticles = len(stateArray[0])
-    # gravity = 100/numberOfParticles
     gravity = 100/N
-    # massI = stateArray[tickNumber - 1][i].mass
-    massI = masses[i]
 
-    totalForce = np.array([0.0, 0.0])
-    for j in range(N):
-        if i != j:
-            massJ = masses[j]
-            # xDifference = stateArray[tickNumber - 1, i].position[0] - stateArray[tickNumber - 1, j].position[0]
-            # yDifference = stateArray[tickNumber - 1, i].position[1] - stateArray[tickNumber - 1, j].position[1]
-            # distance = np.sqrt(xDifference ** 2 + yDifference ** 2)
-            # totalForce[0] += -gravity * massI * xDifference * (massJ / ((distance + epsilon) ** 3))
-            # totalForce[1] += -gravity * massI * yDifference * (massJ / ((distance + epsilon) ** 3))
-            # difference = stateArray[tickNumber - 1, i].position - stateArray[tickNumber - 1, j].position
-            difference = positions[tickNumber, i] - positions[tickNumber, j]
-            distance = np.linalg.norm(difference)
-            #print(gravity, massI, difference, massJ, distance, epsilon)
-            totalForce += -gravity * massI * difference * difference * (massJ / ((distance + epsilon) ** 3))
+    differences = -(positions[tickNumber - 1] - positions[tickNumber - 1, i])
+    differences_squared = differences * differences
 
-    return totalForce
+    distances_squared = differences_squared[:, 0] + differences_squared[:, 1]
+
+    distances = np.sqrt(distances_squared)
+
+    denominators = (distances + epsilon)**3
+    x = masses/denominators
+    result = x.reshape(N, 1) * differences
+
+    # 0 force for j = i
+    result[i] = result[i] * 0
+
+    totalForce = np.sum(result, axis = 0)
+
+    return totalForce * -gravity * masses[i]
 
 
 def particleAcceleration(i, N, masses, positions, velocities, tickNumber):
@@ -38,7 +35,7 @@ def particleAcceleration(i, N, masses, positions, velocities, tickNumber):
 
 
 def updateParticle(i, N, masses, positions, velocities, tickNumber, deltaTime):
-    acceleration = particleAcceleration(i, N, masses, positions, velocities, tickNumber - 1)
+    acceleration = particleAcceleration(i, N, masses, positions, velocities, tickNumber)
     velocities[tickNumber, i] = velocities[tickNumber - 1, i] + acceleration * deltaTime
     positions[tickNumber, i] = positions[tickNumber - 1, i] + velocities[tickNumber, i] * deltaTime
     # stateArray[tickNumber, i] = copy.deepcopy(stateArray[tickNumber - 1, i])
@@ -59,7 +56,7 @@ def solveNbody(func, timespan, initialState, deltaTime, *args):
     if timeVector[-1] < timespan[1]:
         timeVector = np.append(timeVector, timespan[1])
         deltaTimeVector = np.append(
-            deltaTimeVector, timeVector[-1] - timespan[-2]
+            deltaTimeVector, timeVector[-1] - timeVector[-2]
         )
 
     outputVectorArray = np.zeros((len(timeVector), len(initialState)), dtype=object)
@@ -75,18 +72,17 @@ def solveNbody(func, timespan, initialState, deltaTime, *args):
     for i, p in zip(range(N), initialState):
         brightnesses[i] = p.brightness
 
-    positions = np.zeros((len(timeVector), N, 2))
+    positions = np.zeros((len(timeVector), N, 2), dtype=float)
     for i, p in zip(range(N), initialState):
         positions[0, i] = p.position
 
-    velocities = np.zeros((len(timeVector), N, 2))
+    velocities = np.zeros((len(timeVector), N, 2), dtype=float)
     for i, p in zip(range(N), initialState):
         velocities[0, i] = p.velocity
 
     for tickNumber in range(1, len(timeVector)):
         print(f"Tick {tickNumber}")
-        # doTick(outputVectorArray, tickNumber, deltaTime)
-        doTick(N, masses, positions, velocities, tickNumber, deltaTime)
+        doTick(N, masses, positions, velocities, tickNumber, deltaTimeVector[tickNumber])
 
     for tickNumber in range(1, len(timeVector)):
         for i in range(N):
