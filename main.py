@@ -1,4 +1,4 @@
-from collections import namedtuple
+import re
 import struct
 import sys
 import numpy as np
@@ -7,10 +7,11 @@ import matplotlib.pyplot as plt
 from planet import Planet
 import solver
 
+filename = sys.argv[1]
+
 STEPS = 200
 DELTATIME = 0.00001
-N = int(sys.argv[1])
-filename = sys.argv[2]
+N = int(re.search(r"\w+_N_(\d+).gal", filename).group(1))
 print(filename)
 
 
@@ -29,13 +30,12 @@ with open(f"{filename}", "rb") as f:
         #print(data[-1])
 
 
-
-timespan = (0, (STEPS - 1) * DELTATIME)
+timespan = (0, STEPS * DELTATIME)
 timeVector, result = solver.solveNbody(
     func=solver.particleForce,
     timespan=timespan,
     initialState=np.array(data),
-    deltaTime = DELTATIME
+    deltaTime=DELTATIME
 )
 
 
@@ -44,7 +44,7 @@ ys = [data[i].position[1] for i in range(N)]
 sizes = [72 * data[i].brightness for i in range(N)]
 
 
-with open(f"{'dst/'+ 'change_me' + '_output.gal'}", 'wb') as o:
+with open(f"{'dst/' + 'change_me' + '_output.gal'}", 'wb') as o:
     for i in range(N):
         current = result[-1][i]
         writeable = struct.pack('dddddd', current.position[0], current.position[1], current.mass,
@@ -52,9 +52,7 @@ with open(f"{'dst/'+ 'change_me' + '_output.gal'}", 'wb') as o:
         o.write(writeable)
 
 
-
-
-#print(xs, ys)
+# print(xs, ys)
 # xs += [1, 1, 0, 0]
 # ys += [1, 0, 1, 0]
 # sizes += [0, 0, 0, 0]
