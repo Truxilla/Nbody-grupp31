@@ -1,4 +1,3 @@
-import cProfile
 import re
 import struct
 import sys

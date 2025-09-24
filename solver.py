@@ -1,4 +1,3 @@
-import copy
 import numpy as np
 
 from planet import Planet
@@ -7,7 +6,7 @@ epsilon = 0.001
 
 
 def particleForce(
-    i, N, masses, positions, velocities, tickNumber
+    i, N, masses, positions, tickNumber
 ):
     gravity = 100/N
 
@@ -20,28 +19,24 @@ def particleForce(
 
     denominators = (distances + epsilon)**3
     x = masses/denominators
-    result = x.reshape(N, 1) * differences
+    forces = x.reshape(N, 1) * differences
 
     # 0 force for j = i
-    result[i] = result[i] * 0
+    forces[i] = forces[i] * 0
 
-    totalForce = np.sum(result, axis = 0)
+    totalForce = np.sum(forces, axis = 0)
 
     return totalForce * -gravity * masses[i]
 
 
-def particleAcceleration(i, N, masses, positions, velocities, tickNumber):
-    return particleForce(i, N, masses, positions, velocities, tickNumber) / masses[i]
+def particleAcceleration(i, N, masses, positions, tickNumber):
+    return particleForce(i, N, masses, positions, tickNumber) / masses[i]
 
 
 def updateParticle(i, N, masses, positions, velocities, tickNumber, deltaTime):
-    acceleration = particleAcceleration(i, N, masses, positions, velocities, tickNumber)
+    acceleration = particleAcceleration(i, N, masses, positions, tickNumber)
     velocities[tickNumber, i] = velocities[tickNumber - 1, i] + acceleration * deltaTime
     positions[tickNumber, i] = positions[tickNumber - 1, i] + velocities[tickNumber, i] * deltaTime
-    # stateArray[tickNumber, i] = copy.deepcopy(stateArray[tickNumber - 1, i])
-    # acceleration = particleAcceleration(i, stateArray, tickNumber)
-    # stateArray[tickNumber, i].velocity = stateArray[tickNumber - 1, i].velocity + acceleration * deltaTime
-    # stateArray[tickNumber, i].position = stateArray[tickNumber - 1, i].position + stateArray[tickNumber][i].velocity * deltaTime
 
 
 def doTick(N, masses, positions, velocities, tickNumber, deltaTime):
@@ -92,4 +87,5 @@ def solveNbody(func, timespan, initialState, deltaTime, *args):
                 velocities[tickNumber, i],
                 brightnesses[i]
             )
+
     return timeVector, outputVectorArray
