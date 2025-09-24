@@ -3,3 +3,5 @@ Nbody.pdf
 ._
 a.out
 *.exe
+__pycache__
+dst/
