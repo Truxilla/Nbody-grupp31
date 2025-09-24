@@ -1,4 +1,3 @@
-from collections import namedtuple
 import struct
 import sys
 import numpy as np
@@ -43,7 +42,7 @@ sizes = [72 * data[i].brightness for i in range(N)]
 with open(f"{'dst/'+ 'change_me' + '_output.gal'}", 'w') as o:
     for i in range(N):
         current = result[-1][i]
-        writeable = struct.pack('dddddd', current.position[0], current.position[1], current.mass, 
+        writeable = struct.pack('dddddd', current.position[0], current.position[1], current.mass,
                                 current.velocity[0], current.velocity[1], current.brightness)
         o.write(str(writeable))
 
