@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from planet import Planet
 import solver
 
+STEPS = 200
 DELTATIME = 0.00001
 N = int(sys.argv[1])
 filename = sys.argv[2]
@@ -25,11 +26,11 @@ with open(f"{filename}", "rb") as f:
                 brightness
             )
         )
-        print(data[-1])
+        #print(data[-1])
 
 
 
-timespan = (0, N * DELTATIME)
+timespan = (0, (STEPS - 1) * DELTATIME)
 timeVector, result = solver.solveNbody(
     func=solver.particleForce,
     timespan=timespan,
@@ -40,7 +41,7 @@ timeVector, result = solver.solveNbody(
 
 xs = [data[i].position[0] for i in range(N)]
 ys = [data[i].position[1] for i in range(N)]
-sizes = [32 * data[i].brightness for i in range(N)]
+sizes = [72 * data[i].brightness for i in range(N)]
 
 
 with open(f"{'dst/'+ 'change_me' + '_output.gal'}", 'wb') as o:
@@ -53,10 +54,12 @@ with open(f"{'dst/'+ 'change_me' + '_output.gal'}", 'wb') as o:
 
 
 
-print(xs, ys)
+#print(xs, ys)
 xs += [1, 1, 0, 0]
 ys += [1, 0, 1, 0]
 sizes += [0, 0, 0, 0]
 fig, ax = plt.subplots()
 ax.scatter(xs, ys, sizes)
 plt.show()
+
+print(sys.float_info.epsilon)

@@ -30,11 +30,12 @@ def particleAcceleration(i, stateArray, tickNumber):
     return particleForce(i, stateArray, tickNumber) / stateArray[tickNumber - 1, i].mass
 
 
+
 def updateParticle(i, stateArray, tickNumber, deltaTime):
     stateArray[tickNumber, i] = copy.deepcopy(stateArray[tickNumber - 1, i])
     acceleration = particleAcceleration(i, stateArray, tickNumber)
     stateArray[tickNumber, i].velocity = stateArray[tickNumber - 1, i].velocity + acceleration * deltaTime
-    stateArray[tickNumber, i].position = stateArray[tickNumber - 1, i].position + stateArray[tickNumber][i].velocity * deltaTime
+    stateArray[tickNumber, i].position = stateArray[tickNumber - 1, i].position + stateArray[tickNumber, i].velocity * deltaTime
 
 
 def doTick(stateArray, tickNumber, deltaTime):
@@ -54,7 +55,6 @@ def solveNbody(func, timespan, initialState, deltaTime, *args):
 
     outputVectorArray = np.zeros((len(timeVector), len(initialState)), dtype=object)
     outputVectorArray[0, :] = initialState
-    print(outputVectorArray)
 
     for tickNumber in range(1, len(timeVector)):
         doTick(outputVectorArray, tickNumber, deltaTime)
