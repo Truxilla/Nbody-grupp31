@@ -1,3 +1,4 @@
+import re
 import struct
 import sys
 import numpy as np
@@ -6,8 +7,9 @@ import matplotlib.pyplot as plt
 from planet import Planet
 import solver
 
-N = int(sys.argv[1])
-filename = sys.argv[2]
+filename = sys.argv[1]
+
+N = int(re.search(r"\w+_N_(\d+).gal", filename).group(1))
 print(filename)
 
 
