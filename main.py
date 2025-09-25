@@ -1,3 +1,4 @@
+import os
 import re
 import struct
 import sys
@@ -13,7 +14,7 @@ STEPS = 200
 DELTATIME = 0.00001
 N = int(re.search(r"\w+_N_(\d+).gal", filename).group(1))
 print(filename)
-
+basename = os.path.basename(filename)
 
 data = []
 with open(f"{filename}", "rb") as f:
@@ -43,7 +44,7 @@ ys = [data[i].position[1] for i in range(N)]
 sizes = [72 * data[i].brightness for i in range(N)]
 
 
-with open(f"{'dst/' + 'change_me' + '_output.gal'}", 'wb') as o:
+with open(f'dst/{basename.replace(".gal", "_out.gal")}', 'wb') as o:
     for i in range(N):
         current = result[-1][i]
         writeable = struct.pack('dddddd', current.position[0], current.position[1], current.mass,

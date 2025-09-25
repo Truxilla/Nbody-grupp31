@@ -10,23 +10,17 @@ def particleAcceleration(
 ):
     gravity = 100/N
 
-    differences = -(positions[tickNumber - 1] - positions[tickNumber - 1, i])
-    differences_squared = differences * differences
+    differences = positions[tickNumber - 1, i] - positions[tickNumber - 1]
 
-    distances_squared = differences_squared[:, 0] + differences_squared[:, 1]
+    distances_squared = np.einsum("ij,ij->i", differences, differences)
+    distances = np.sqrt(distances_squared) + epsilon
 
-    distances = np.sqrt(distances_squared)
+    denominators = 1/(distances * distances**2)
+    x = masses * denominators
 
-    denominators = (distances + epsilon)**3
-    x = masses/denominators
-    forces = x.reshape(N, 1) * differences
+    totalForce = np.einsum("i, ij->j", x, differences)
 
-    # 0 force for j = i
-    forces[i] = forces[i] * 0
-
-    totalForce = np.sum(forces, axis = 0)
-
-    return totalForce * -gravity
+    return -gravity * totalForce
 
 
 def updateParticle(i, N, masses, positions, velocities, tickNumber, deltaTime):
