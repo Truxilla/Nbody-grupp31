@@ -75,7 +75,11 @@ def createAnimation(filename, N, result, steps, sizeFunction):
 def main():
     filename = sys.argv[1]
 
-    STEPS = 200
+    if len(sys.argv) > 2:
+        STEPS = int(sys.argv[2])
+    else:
+        STEPS = 200
+
     DELTATIME = 0.00001
 
     # Parses the number of planets from the filename
