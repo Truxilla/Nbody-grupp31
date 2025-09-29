@@ -12,13 +12,16 @@ filename = sys.argv[1]
 
 STEPS = 200
 DELTATIME = 0.00001
+
+# Parses the number of planets from the filename
 N = int(re.search(r"\w+_N_(\d+).gal", filename).group(1))
 print(filename)
 
-
+# Create an array that will hold all the data read from the input file
 data = []
 with open(f"{filename}", "rb") as f:
     for i in range(N):
+        # Read the data for a planet, which is the size of six doubles and assign them to corresponding fields
         (x, y, mass, vx, vy, brightness) = struct.unpack('dddddd', f.read(8*6))
         data.append(
             Planet(
@@ -45,7 +48,9 @@ sizes = [72 * data[i].brightness for i in range(N)]
 
 with open(f"{'dst/' + 'change_me' + '_output.gal'}", 'wb') as o:
     for i in range(N):
+        # The last tick for the i:th body
         current = result[-1][i]
+        # Packs the six fields as six doubles to write to the output file
         writeable = struct.pack('dddddd', current.position[0], current.position[1], current.mass,
                                 current.velocity[0], current.velocity[1], current.brightness)
         o.write(writeable)
