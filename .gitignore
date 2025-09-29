@@ -5,3 +5,4 @@ a.out
 *.exe
 __pycache__
 dst/
+*.mp4
