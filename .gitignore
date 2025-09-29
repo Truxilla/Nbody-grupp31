@@ -6,3 +6,4 @@ a.out
 __pycache__
 dst/
 *.mp4
+*.gif

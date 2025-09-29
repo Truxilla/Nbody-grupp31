@@ -100,7 +100,7 @@ def main():
         filename="simulation.mp4",
         N=N,
         result=result,
-        steps=STEPS,
+        steps=STEPS+1,
         sizeFunction=lambda planet: 10 * planet.mass ** (1/3)
     )
 
