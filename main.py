@@ -22,6 +22,7 @@ def readData(filename, N):
                     np.array([vx, vy]),
                     brightness
                 )
+            )
     return data
 
 
@@ -76,7 +77,7 @@ def main():
 
     STEPS = 200
     DELTATIME = 0.00001
-    
+
     # Parses the number of planets from the filename
     N = int(re.search(r"\w+_N_(\d+).gal", filename).group(1))
     print(filename)
