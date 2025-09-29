@@ -3,6 +3,7 @@ import struct
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 from planet import Planet
 import solver
@@ -27,7 +28,6 @@ with open(f"{filename}", "rb") as f:
                 brightness
             )
         )
-        #print(data[-1])
 
 
 timespan = (0, STEPS * DELTATIME)
@@ -51,12 +51,31 @@ with open(f"{'dst/' + 'change_me' + '_output.gal'}", 'wb') as o:
         o.write(writeable)
 
 
-# print(xs, ys)
-# xs += [1, 1, 0, 0]
-# ys += [1, 0, 1, 0]
-# sizes += [0, 0, 0, 0]
-# fig, ax = plt.subplots()
-# ax.scatter(xs, ys, sizes)
-# plt.show()
+fig, ax = plt.subplots()
 
-print(sys.float_info.epsilon)
+ax.axis([0, 1, 0, 1])
+sc = plt.scatter(x = xs, y = ys)
+
+def init():
+    return sc,
+
+def animate(t):
+    sc.set_offsets(np.array([result[t][i].position for i in range(N)]))
+
+    return sc,
+
+anim = animation.FuncAnimation(
+    fig,
+    animate,
+    init_func = init,
+    frames = 200,
+    interval = 20,
+    blit = True
+)
+
+
+anim.save(
+    "simulation.mp4",
+    writer = "ffmpeg",
+    fps = 30
+)
