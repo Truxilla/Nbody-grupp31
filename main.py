@@ -10,6 +10,7 @@ import solver
 
 
 def readData(filename, N):
+    # Create an array that will hold all the data read from the input file
     data = []
     with open(f"{filename}", "rb") as f:
         for i in range(N):
@@ -21,14 +22,15 @@ def readData(filename, N):
                     np.array([vx, vy]),
                     brightness
                 )
-            )
     return data
 
 
 def writeResult(filename, N, result):
     with open(filename, 'wb') as o:
         for i in range(N):
+            # The last tick for the i:th body
             current = result[-1][i]
+            # Packs the six fields as six doubles to write to the output file
             writeable = struct.pack('dddddd', current.position[0], current.position[1], current.mass,
                                     current.velocity[0], current.velocity[1], current.brightness)
             o.write(writeable)
@@ -62,7 +64,6 @@ def createAnimation(filename, N, result, steps, sizeFunction):
         blit = True
     )
 
-
     anim.save(
         filename,
         writer = "ffmpeg",
@@ -75,6 +76,8 @@ def main():
 
     STEPS = 200
     DELTATIME = 0.00001
+    
+    # Parses the number of planets from the filename
     N = int(re.search(r"\w+_N_(\d+).gal", filename).group(1))
     print(filename)
     data = readData(filename, N)
