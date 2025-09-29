@@ -5,9 +5,7 @@ from planet import Planet
 epsilon = 0.001
 
 
-def particleAcceleration(
-    i, N, masses, positions, tickNumber
-):
+def particleAcceleration(i, N, masses, positions, tickNumber):
     gravity = 100/N
 
     # Calculate differences in position (r) between particle i and each particle
@@ -35,7 +33,9 @@ def particleAcceleration(
 
 def updateParticle(i, N, masses, positions, velocities, tickNumber, deltaTime):
     acceleration = particleAcceleration(i, N, masses, positions, tickNumber)
+    # v_i = v_(i-1) + a_i * dt
     velocities[tickNumber, i] = velocities[tickNumber - 1, i] + acceleration * deltaTime
+    # s_i = s_(i-1) + v_i * dt
     positions[tickNumber, i] = positions[tickNumber - 1, i] + velocities[tickNumber, i] * deltaTime
 
 
@@ -44,7 +44,7 @@ def doTick(N, masses, positions, velocities, tickNumber, deltaTime):
         updateParticle(i, N, masses, positions, velocities, tickNumber, deltaTime)
 
 
-def solveNbody(timespan, initialState, deltaTime, *args):
+def solveNbody(timespan, initialState, deltaTime):
     timeVector = np.arange(timespan[0], timespan[1], deltaTime)
     deltaTimeVector = np.ones_like(timeVector) * deltaTime
 
@@ -96,4 +96,4 @@ def solveNbody(timespan, initialState, deltaTime, *args):
                 brightnesses[i]
             )
 
-    return timeVector, outputVectorArray
+    return outputVectorArray
