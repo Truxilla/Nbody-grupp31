@@ -1,6 +1,7 @@
 import re
 import struct
 import sys
+import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -37,7 +38,7 @@ def writeResult(filename, N, result):
             o.write(writeable)
 
 
-def createAnimation(filename, N, result, steps, sizeFunction):
+def createAnimation(filename, N, result, steps, sizeFunction, fps):
     xs = [result[0][i].position[0] for i in range(N)]
     ys = [result[0][i].position[1] for i in range(N)]
     sizes = [sizeFunction(result[0][i]) for i in range(N)]
@@ -53,7 +54,7 @@ def createAnimation(filename, N, result, steps, sizeFunction):
 
     def animate(t):
         sc.set_offsets([result[t][i].position for i in range(N)])
-        print(t)
+        print(f"Frame {t + 1}/{steps}")
         return sc,
 
     anim = animation.FuncAnimation(
@@ -67,42 +68,54 @@ def createAnimation(filename, N, result, steps, sizeFunction):
 
     anim.save(
         filename,
-        writer = "ffmpeg",
-        fps = 30
+        writer="ffmpeg",
+        fps=fps
     )
 
 
 def main():
-    filename = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", type=str)
+    parser.add_argument("steps", nargs="?", default=200, type=int)
+    parser.add_argument("-a", "--animate", type=str)
+    parser.add_argument("-m", "--mass", action="store_true")
+    parser.add_argument("-s", "--scale", type=float, default=25)
+    parser.add_argument("-o", "--outfile", type=str)
+    parser.add_argument("-f", "--fps", type=int, default=60)
+    parser.add_argument("-d", "--deltatime", type=float, default=0.00001)
+    args = parser.parse_args()
 
-    if len(sys.argv) > 2:
-        STEPS = int(sys.argv[2])
-    else:
-        STEPS = 200
-
-    DELTATIME = 0.00001
+    filename = args.filename
 
     # Parses the number of planets from the filename
     N = int(re.search(r"\w+_N_(\d+).gal", filename).group(1))
-    print(filename)
+
     data = readData(filename, N)
 
-    timespan = (0, STEPS * DELTATIME)
+    timespan = (0, args.steps * args.deltatime)
     result = solver.solveNbody(
         timespan=timespan,
         initialState=np.array(data),
-        deltaTime=DELTATIME
+        deltaTime=args.deltatime
     )
 
-    writeResult('dst/change_me_output.gal', N, result)
+    if args.outfile:
+        writeResult(args.outfile, N, result)
 
-    createAnimation(
-        filename="simulation.mp4",
-        N=N,
-        result=result,
-        steps=STEPS+1,
-        sizeFunction=lambda planet: 10 * planet.mass ** (1/3)
-    )
+    if args.animate:
+        if args.mass:
+            sizeFunction = lambda planet: args.scale * planet.mass ** (1/3)
+        else:
+            sizeFunction = lambda planet: args.scale * planet.brightness
+
+        createAnimation(
+            filename=args.animate,
+            N=N,
+            result=result,
+            steps=args.steps+1,
+            sizeFunction=sizeFunction,
+            fps=args.fps
+        )
 
 
 if __name__ == "__main__":
