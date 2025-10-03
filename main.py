@@ -43,11 +43,12 @@ def createAnimation(filename, N, result, steps, sizeFunction, fps):
     ys = [result[0][i].position[1] for i in range(N)]
     sizes = [sizeFunction(result[0][i]) for i in range(N)]
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(4.8, 4.8), dpi=200)
+    fig.tight_layout()
 
     ax.axis([0, 1, 0, 1])
     ax.set_aspect("equal")
-    sc = plt.scatter(x = xs, y = ys, s=sizes)
+    sc = plt.scatter(x = xs, y = ys, s=sizes, edgecolors="none")
 
     def init():
         return sc,
