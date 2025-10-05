@@ -97,3 +97,33 @@ def solveNbody(timespan, initialState, deltaTime):
             )
 
     return outputVectorArray
+
+
+def particleAccelerationOptimized(i, N, masses, positions, tickNumber):
+    """ Slightly faster version (~40%) of particleAcceleration
+        which was used to generate some of the longer simulation
+        and simulations with more objects.
+        It basically works the same as particleAcceleration but uses
+        np.einsum to speed up some array operations.
+    """
+    gravity = 100/N
+
+    # Calculate differences in position (r) between particle i and each particle
+    # as an array of vectors [[xDiff1, yDiff1], [xDiff2, yDiff2], ...]
+    differences = positions[tickNumber - 1, i] - positions[tickNumber - 1]
+
+    # First compute xDiff^2+yDiff^2 for each difference and then
+    # Take the square root to get an array of the distances from
+    # i to each particle
+    distances_squared = np.einsum("ij,ij->i", differences, differences)
+    distances = np.sqrt(distances_squared) + epsilon
+
+    # Calculate m_j/r^3 for each particle
+    denominators = 1/(distances * distances**2)
+    x = masses * denominators
+
+    # Calculate the gravitational acceleration exerted on the particle by each
+    # other particle and sum the result to get the total acceleration
+    totalForce = np.einsum("i, ij->j", x, differences)
+
+    return -gravity * totalForce
